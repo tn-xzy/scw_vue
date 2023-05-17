@@ -25,7 +25,7 @@
                         <el-icon :size="75">
                             <Edit/>
                         </el-icon>
-                        <div>查看队伍信息</div>
+                        <div><del>查看队伍信息</del></div>
                     </div>
                     <div class="list-inner" @click="$router.push('/ManagerWork')">
                         <el-icon :size="75">

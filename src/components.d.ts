@@ -21,6 +21,7 @@ declare module '@vue/runtime-core' {
     ElRadio: typeof import('element-plus/es')['ElRadio']
     ElRow: typeof import('element-plus/es')['ElRow']
     ElSelect: typeof import('element-plus/es')['ElSelect']
+    ElSwitch: typeof import('element-plus/es')['ElSwitch']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
   }
