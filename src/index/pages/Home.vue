@@ -1,24 +1,24 @@
 <template>
     <div class="main-box">
         <div class="function-box round-border">
-            <div class="col-box">
+            <div class="col-box" v-show="userInfo.userType==='teacher' ||development">
                 <div class="title">教师功能</div>
                 <div class="list-outer">
-                    <div class="list-inner" @click="$router.push('/TeacherTeam')">
+                    <div class="list-inner" @click="$router.push('/TeacherWorkSingle')">
                         <el-icon :size="75">
                             <Edit/>
                         </el-icon>
-                        <div>管理组队</div>
+                        <div>创建学习任务</div>
                     </div>
                     <div class="list-inner" @click="$router.push('/TeacherWorkAll')">
                         <el-icon :size="75">
                             <Edit/>
                         </el-icon>
-                        <div>管理学习任务</div>
+                        <div>查看学习任务</div>
                     </div>
                 </div>
-            </div>
-            <div class="col-box">
+            </div >
+            <div class="col-box" v-show="userInfo.userType==='student' ||development">
                 <div class="title">学生功能</div>
                 <div class="list-outer">
                     <div class="list-inner" @click="$router.push('/StudentTeam')">
@@ -71,27 +71,53 @@
                     个人信息
                 </div>
                 <div class="info-box">
-                    <div style="margin-top: 10px">用户Id:{{userInfo.userId}}</div>
-                    <div>用户名:{{userInfo.userName}}</div>
-                    <div v-show="userInfo.userType==='student'">所属团队:{{userInfo.userTeam}}</div>
+                    <div style="margin-top: 10px">用户Id:{{ userInfo.userId }}</div>
+                    <div>用户名:{{ userInfo.userName }}</div>
+                    <div v-show="userInfo.userType==='student'">所属团队:{{ userInfo.userTeam }}</div>
                 </div>
             </div>
             <div class="announce-box round-border" @click="$router.push('/test')">
-                未读通知
+                <div class="bar-box">
+                    <span>未读通知</span>
+                    <el-button @click="readAllNotification">全部已读</el-button>
+                </div>
+                <div v-if="notificationList.length!==0" class="notification-box" v-for="noti in notificationList"
+                     :key="notificationList.notId">
+                    <p>发布时间:{{ noti.releaseTime }}</p>
+                    <p>内容:{{ noti.notification }}</p>
+                </div>
+                <div v-else>
+                    当前还没有任何新的通知
+                </div>
             </div>
         </div>
     </div>
 </template>
 
 <script>
-import FunctionList from "../function_list.js";
-import {ElMessage, ElMessageBox} from "element-plus";
 
 export default {
   data() {
     return {
-      userInfo:{
-      }
+      development: true,
+      userInfo: {},
+      notificationList: [
+        {
+          "notId": 1334869588,
+          "publisher": 2,
+          "content": "Tue May 16 20:27:00 CST 2023,新的学习任务:       test mission1...,截至时间是Thu Jun 01 00:00:00 CST 2023"
+        },
+        {
+          "notId": 1334869588,
+          "publisher": 2,
+          "content": "Tue May 16 20:27:00 CST 2023,新的学习任务:       test mission1...,截至时间是Thu Jun 01 00:00:00 CST 2023"
+        },
+        {
+          "notId": 1334869588,
+          "publisher": 2,
+          "content": "Tue May 16 20:27:00 CST 2023,新的学习任务:       test mission1...,截至时间是Thu Jun 01 00:00:00 CST 2023"
+        }
+      ]
     }
   },
   methods: {
@@ -99,13 +125,26 @@ export default {
       this.$axios.get("/api/user/information")
           .then(resp => {
             console.log(resp)
+            this.userInfo = resp.data.data
           })
     },
+    getNotificationList() {
+      //这里获取一下所有未读通知放入this.notificationList
+      for (let i = 0; i < this.notificationList.length; i++) {
+        let content = this.notificationList[i].content
+        content = content.split(",")
+        this.notificationList[i].releaseTime = content[0]
+        this.notificationList[i].notification = content[1] + content[2]
+      }
 
+    },
+    readAllNotification() {
+      //调用接口 将未读的通知设为已读
+    }
   },
   mounted() {
     this.getUserInfo()
-
+    this.getNotificationList()
   }
 
 }
@@ -183,6 +222,24 @@ $box-padding: 10px;
     .announce-box {
       height: 30%;
       background: rgb(204, 204, 204);
+      overflow: auto;
+
+      .bar-box {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .notification-box {
+        background: #dedede;
+        border-radius: 10px;
+        padding: 10px;
+        margin: 5px;
+
+        p {
+          margin: 0;
+        }
+      }
     }
   }
 }
