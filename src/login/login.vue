@@ -1,10 +1,7 @@
 <template>
     <div id="app">
-        <el-row style="height: 70%; width: 70%" class="flex-center">
-            <el-col :span="14">
-                <img src="../assets/main.png" style="width: 100%"/>
-            </el-col>
-            <el-col :span="8" class="vertical-center" style="width: 30%">
+        <div class="flex-center">
+            <div class="vertical-center" >
                 <h2>在线学习网站</h2>
                 <div v-show="register === false" class="flex-vertical">
                     <el-input
@@ -43,62 +40,9 @@
                     </el-button
                     >
                 </div>
-                <div v-show="register == true" class="flex-vertical">
-                    <div class="info-input">
-                        <el-radio v-model="register_info.user_type" label="学生"
-                        >学生
-                        </el-radio
-                        >
-                        <el-radio v-model="register_info.user_type" label="教师"
-                        >教师
-                        </el-radio
-                        >
-                    </div>
-                    <el-input
-                            class="info-input"
-                            placeholder="姓名"
-                            v-model="register_info.name"
-                            :prefix-icon="ElIconUser"
-                    ></el-input>
-                    <div class="info-input">
-                        <el-radio v-model="register_info.sex" label="男">男</el-radio>
-                        <el-radio v-model="register_info.sex" label="女">女</el-radio>
-                    </div>
-                    <el-select
-                            class="info-input"
-                            v-model="register_info.department"
-                            placeholder="请选择学院">
-                        <el-option label="计算机学院" value="计算机学院"></el-option>
-                    </el-select>
-                    <el-input
-                            class="info-input"
-                            placeholder="密码"
-                            v-model="register_info.password"
-                            show-password
-                            :prefix-icon="ElIconLock">
 
-                    </el-input>
-                    <el-input
-                            class="info-input"
-                            placeholder="确认密码"
-                            v-model="register_info.auth_password"
-                            show-password
-                            :prefix-icon="ElIconLock">
-                    </el-input>
-                    <el-button type="text" class="info-input" @click="register = false"
-                    >已有账户？点击这里登录
-                    </el-button>
-                    <el-button
-                            class="info-input"
-                            type="primary"
-                            @click="Register"
-                            :loading="loadflag"
-                            style="width: 50%; border-radius: 15px; background-color: #5d2dcc"
-                    >注册
-                    </el-button>
-                </div>
-            </el-col>
-        </el-row>
+            </div>
+        </div>
     </div>
 </template>
 
@@ -250,6 +194,7 @@ body {
     display: flex;
     flex-direction: column;
     justify-content: space-around;
+    margin: 0 20px;
     /* align-items: center; */
 }
 

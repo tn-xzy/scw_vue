@@ -1,6 +1,6 @@
 <template>
-    <div class="work-box" v-for="work in workList" :key="work.singleWorkId" v-show="work.status===0">
-        <el-descriptions title="任务" border>
+    <div class="work-box" v-for="work in workList" :key="work.singleWorkId" v-show="work.status===0" v-if="workList.length!==0">
+        <el-descriptions title="任务" border >
             <el-descriptions-item label="任务描述">{{ work.workDescription }}</el-descriptions-item>
             <el-descriptions-item label="从属任务">{{ work.studyWork.content }}</el-descriptions-item>
             <el-descriptions-item label="发布时间">{{ work.studyWork.releaseTime }}</el-descriptions-item>
@@ -23,6 +23,7 @@
             </el-descriptions-item>
         </el-descriptions>
     </div>
+    <div v-else style="display: flex;justify-content: center"><p>这里空空如也</p></div>
 </template>
 
 <script>
@@ -63,7 +64,7 @@ export default {
 
   },
   methods: {
-    uploadFile(e,work) {
+    uploadFile(e, work) {
       const file = e.target.files[0];
       const formData = new FormData();
       formData.append("file", file)
@@ -71,7 +72,7 @@ export default {
       this.$axios.post("/api//work/resource/" + "4", formData, {
         'Content-type': 'multipart/form-data'
       }).then(res => {
-        work.productionRoute=res.data.data
+        work.productionRoute = res.data.data
       })
     },
     loadAllPersonWorks() {
@@ -81,6 +82,12 @@ export default {
           })
     },
     saveWork(work) {
+      if (work.productionRoute === "") {
+        ElMessageBox.alert(`未上传成果`, `提示`, {
+          confirmButtonText: 'OK',
+        })
+        return
+      }
       this.$axios.post("/api/work/single/modify/2", {
         "belongStudent": work.belongStudent,
         "belongWork": work.belongWork,
@@ -88,16 +95,22 @@ export default {
         "singleWorkId": work.singleWorkId,
         "status": 0,
         "workDescription": work.workDescription
-      }).then(res=>{
-        if (res.data.status===0){
+      }).then(res => {
+        if (res.data.status === 0) {
           this.loadAllPersonWorks()
-          ElMessageBox.alert(`创建成功`, `提示`, {
+          ElMessageBox.alert(`成功`, `提示`, {
             confirmButtonText: 'OK',
           })
         }
       })
     },
     submitWork(work) {
+      if (work.productionRoute === "") {
+        ElMessageBox.alert(`未上传成果`, `提示`, {
+          confirmButtonText: 'OK',
+        })
+        return
+      }
       this.$axios.post("/api/work/single/modify/3", {
         "belongStudent": work.belongStudent,
         "belongWork": work.belongWork,
@@ -105,6 +118,13 @@ export default {
         "singleWorkId": work.singleWorkId,
         "status": 1,
         "workDescription": work.workDescription
+      }).then(res=>{
+          if (res.data.status === 0) {
+              this.loadAllPersonWorks()
+              ElMessageBox.alert(`成功`, `提示`, {
+                  confirmButtonText: 'OK',
+              })
+          }
       })
     },
   },

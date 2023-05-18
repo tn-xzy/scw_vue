@@ -8,10 +8,20 @@
                 work.resourceRoute.split("/").pop()
                 }}</a></el-descriptions-item>
             <el-descriptions-item label="状态">{{ status2description(work.status) }}</el-descriptions-item>
-            <el-descriptions-item label="操作" v-if="work.teamWorkId!==undefined">
+            <el-descriptions-item label="操作" v-if="work.teamWorkId!==undefined && work.submitStatus!==1">
                 <el-button @click="createPersonWork(work)">创建个人任务</el-button>
                 <el-button @click="checkCompleteness(work)">查看完成情况</el-button>
                 <el-button @click="submitTeamWork(work)">提交团队任务</el-button>
+            </el-descriptions-item>
+            <template v-if="work.submitStatus===1&&work.comment!==null">
+                <el-descriptions-item label="成绩">
+                    {{ work.comment.score }}
+                </el-descriptions-item>
+                <el-descriptions-item label="批注">
+                    {{ work.comment.description }}
+                </el-descriptions-item>
+            </template>
+            <el-descriptions-item v-if="work.submitStatus===1&&work.comment==null" label="批阅情况">未批阅
             </el-descriptions-item>
         </el-descriptions>
         <el-descriptions title="创建个人任务" border v-show="work.showCreate===true">
@@ -31,14 +41,18 @@
         </el-descriptions>
         <el-descriptions title="查看完成情况" border v-show="work.showCompleteness===true" :column="4">
             <template v-for="singleWork in work.singleWorks" :key="singleWork.singleWorkId"
-                      v-show="singleWork.status!==0">
+                      v-if="work.singleWorks!==undefined&&work.singleWorks.length!==0">
                 <el-descriptions-item label="任务描述">{{ singleWork.workDescription }}</el-descriptions-item>
-                <el-descriptions-item label="任务人">{{ singleWork.belongStudent }}</el-descriptions-item>
-                <el-descriptions-item label="提交情况">{{ singleWork.status }}</el-descriptions-item>
+                <el-descriptions-item label="任务人">{{ id2work(singleWork.belongStudent) }}</el-descriptions-item>
+                <el-descriptions-item label="提交情况">{{
+                    status2description(singleWork.status)
+                    }}
+                </el-descriptions-item>
                 <el-descriptions-item label="提交成果"><a
                         :href="singleWork.productionRoute">{{ singleWork.productionRoute.split("/").pop() }}</a>
                 </el-descriptions-item>
             </template>
+            <el-descriptions-item label="提交情况" v-else>当前任务下未布置个人任务</el-descriptions-item>
         </el-descriptions>
         <el-descriptions title="提交团队任务" border v-show="work.showFinalSubmit===true">
             <el-descriptions-item label="任务描述">
@@ -85,6 +99,12 @@ export default {
       this.operatingWork = work
     },
     submitPersonWork(work) {
+      if (this.personWork.belongStudent === undefined || this.personWork.belongWork === undefined) {
+        ElMessageBox.alert(`有项目未填`, `提示`, {
+          confirmButtonText: 'OK',
+        })
+        return
+      }
       this.$axios.post("/api/work/single/create",
           this.personWork)
           .then(res => {
@@ -97,21 +117,39 @@ export default {
       this.closeChecking()
     },
     checkCompleteness(work) {
-      work.showCompleteness = !work.showCompleteness
+      if (work.showCompleteness === true) {
+        work.showCompleteness = false
+      }
+      work.showCompleteness = true
+      this.reloadWork(work)
+    },
+    reloadWork(work) {
+      this.$axios.get("/api/work/team/response")
+          .then(res => {
+            let responsibleWorkList = res.data.data
+            for (let responsibleWork of responsibleWorkList) {
+              if (work.workId === responsibleWork.belongWork) {
+                work.singleWorks = responsibleWork.singleWorks
+              }
+            }
+          })
     },
     loadAllWorks() {
       this.$axios.get("/api/work/study/all")
           .then(res => {
             let workList = res.data.data
+            workList.sort(function (a, b) {
+              let dateA = new Date(a.releaseTime);
+              let dateB = new Date(b.releaseTime);
+              return dateB - dateA;
+            });
             let workMap = new Map()
             for (let work of workList)
               workMap.set(work.workId, work)
             this.$axios.get("/api/work/team/response")
                 .then(res => {
                   let responsibleWorkList = res.data.data
-                  console.log(workMap)
                   for (let work of responsibleWorkList) {
-                    console.log(work)
                     if (workMap.has(work.belongWork)) {
                       workMap.get(work.belongWork).teamWorkId = work.teamWorkId
                       workMap.get(work.belongWork).singleWorks = work.singleWorks
@@ -119,9 +157,12 @@ export default {
                       workMap.get(work.belongWork).productionRoute = work.productionRoute
                       workMap.get(work.belongWork).belongWork = work.belongWork
                       workMap.get(work.belongWork).belongTeam = work.belongTeam
+                      workMap.get(work.belongWork).submitStatus = work.status
+                      workMap.get(work.belongWork).comment = work.comment
                     }
                   }
                   this.workList = workList
+                  console.log(workList)
                 })
           })
     },
@@ -161,6 +202,12 @@ export default {
     },
     teamWorkSave(work) {
       console.log(work)
+      if (work.productionRoute === null || work.workDescription === null) {
+        ElMessageBox.alert(`有项目未填`, `提示`, {
+          confirmButtonText: 'OK',
+        })
+        return
+      }
       this.$axios.post("/api/work/team/modify/1", {
         "belongTeam": work.belongTeam,
         "belongWork": work.belongWork,
@@ -170,10 +217,18 @@ export default {
         "workDescription": work.workDescription
       }).then(res => {
         console.log(res)
-        //TODO 用ElElMessageBox提示一下成功
+        ElMessageBox.alert(`成功`, `提示`, {
+          confirmButtonText: 'OK',
+        })
       })
     },
     teamWorkSubmit(work) {
+      if (work.productionRoute === null || work.workDescription === null) {
+        ElMessageBox.alert(`有项目未填`, `提示`, {
+          confirmButtonText: 'OK',
+        })
+        return
+      }
       this.$axios.post("/api/work/team/modify/2", {
         "belongTeam": work.belongTeam,
         "belongWork": work.belongWork,
@@ -183,7 +238,9 @@ export default {
         "workDescription": work.workDescription
       }).then(res => {
         console.log(res)
-        //TODO 用ElElMessageBox提示一下成功
+        ElMessageBox.alert(`成功`, `提示`, {
+          confirmButtonText: 'OK',
+        })
       })
     },
     submitTeamWork(work) {
@@ -204,7 +261,15 @@ export default {
       this.teamWork.productionRoute = work.productionRoute
       this.teamWork.teamWorkId = work.teamWorkId
       this.teamWork.workDescription = work.workDescription
+    },
+    id2work(id) {
+      //TODO 查this.memberList根据id返回职责
+      return "小组长"//随便返回一下，写好了记得删掉
+    },
+    loadTeamMember() {
+      //TODO 根据 获取队伍设置接口和获取所在团队信息接口创建this.memberList
     }
+
   },
   data() {
     return {
@@ -236,7 +301,7 @@ export default {
           "releaseTime": "2023-05-16 20:27:00",
           "endTime": "2023-06-01 00:00:00",
           "resourceRoute": "http://127.0.0.1:8081/static/study_work/resource/2035060729 谢卓越 实验二(1).docx",
-          "status": 1,
+          "status": 0,
           "singleWorks": [
             {
               "singleWorkId": 675604500,
@@ -280,7 +345,10 @@ export default {
       ],
       memberList: {
         "小组长": 1,
-        "开发经理": 3
+        "质量经理": 3,
+        "开发经理": 4,
+        "产品经理": 5,
+        "测试经理": 6
       },
       singleWorks: [
         {
@@ -304,6 +372,7 @@ export default {
   },
   mounted() {
     this.loadAllWorks()
+    this.loadTeamMember()
   }
 
 }

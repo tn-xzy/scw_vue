@@ -5,13 +5,13 @@
                 <div class="title">教师功能</div>
                 <div class="list-outer">
                     <div class="list-inner" @click="$router.push('/TeacherWorkSingle')">
-                        <el-icon :size="75">
+                        <el-icon :size="95">
                             <Edit/>
                         </el-icon>
                         <div>创建学习任务</div>
                     </div>
                     <div class="list-inner" @click="$router.push('/TeacherWorkAll')">
-                        <el-icon :size="75">
+                        <el-icon :size="95">
                             <Edit/>
                         </el-icon>
                         <div>查看学习任务</div>
@@ -21,23 +21,23 @@
             <div class="col-box" v-show="userInfo.userType==='student' ||development">
                 <div class="title">学生功能</div>
                 <div class="list-outer">
-                    <div class="list-inner" @click="$router.push('/StudentTeam')">
-                        <el-icon :size="75">
-                            <Edit/>
-                        </el-icon>
-                        <div><del>查看队伍信息</del></div>
-                    </div>
+<!--                    <div class="list-inner" @click="$router.push('/StudentTeam')">-->
+<!--                        <el-icon :size="75">-->
+<!--                            <Edit/>-->
+<!--                        </el-icon>-->
+<!--                        <div><del>查看队伍信息</del></div>-->
+<!--                    </div>-->
                     <div class="list-inner" @click="$router.push('/ManagerWork')">
-                        <el-icon :size="75">
+                        <el-icon :size="95">
                             <Edit/>
                         </el-icon>
-                        <div>查看负责<br>的团队任务</div>
+                        <div>团队任务</div>
                     </div>
                     <div class="list-inner" @click="$router.push('/PersonWork')">
-                        <el-icon :size="75">
+                        <el-icon :size="95">
                             <Edit/>
                         </el-icon>
-                        <div>查看个人任务</div>
+                        <div>个人任务</div>
                     </div>
                 </div>
             </div>
@@ -45,19 +45,19 @@
                 <div class="title">通用功能</div>
                 <div class="list-outer">
                     <div class="list-inner">
-                        <el-icon :size="75">
+                        <el-icon :size="95">
                             <Edit/>
                         </el-icon>
                         <div>群聊</div>
                     </div>
                     <div class="list-inner">
-                        <el-icon :size="75">
+                        <el-icon :size="95">
                             <Edit/>
                         </el-icon>
                         <div>资料库</div>
                     </div>
                     <div class="list-inner">
-                        <el-icon :size="75">
+                        <el-icon :size="95">
                             <Edit/>
                         </el-icon>
                         <div>通知</div>
@@ -83,8 +83,8 @@
                 </div>
                 <div v-if="notificationList.length!==0" class="notification-box" v-for="noti in notificationList"
                      :key="notificationList.notId">
-                    <p>发布时间:{{ noti.releaseTime }}</p>
-                    <p>内容:{{ noti.notification }}</p>
+                    <p>{{ noti.content }}</p>
+<!--                    <p>内容:{{ noti.notification }}</p>-->
                 </div>
                 <div v-else>
                     当前还没有任何新的通知
@@ -99,7 +99,7 @@
 export default {
   data() {
     return {
-      development: true,
+      development: false,
       userInfo: {},
       notificationList: [
         {
@@ -129,17 +129,16 @@ export default {
           })
     },
     getNotificationList() {
-      //这里获取一下所有未读通知放入this.notificationList
-      for (let i = 0; i < this.notificationList.length; i++) {
-        let content = this.notificationList[i].content
-        content = content.split(",")
-        this.notificationList[i].releaseTime = content[0]
-        this.notificationList[i].notification = content[1] + content[2]
-      }
-
+      //TODO 这里获取一下所有未读通知放入this.notificationList,被注释的代码不用管
+      // for (let i = 0; i < this.notificationList.length; i++) {
+      //   let content = this.notificationList[i].content
+      //   content = content.split(",")
+      //   this.notificationList[i].releaseTime = content[0]
+      //   this.notificationList[i].notification = content[1] + content[2]
+      // }
     },
     readAllNotification() {
-      //调用接口 将未读的通知设为已读
+      //TODO 调用接口 将未读的通知设为已读
     }
   },
   mounted() {

@@ -54,18 +54,21 @@ export default {
   data() {
     return {
       workData: {
-        "content": "",
-        endTime: new Date(),
+        "content": undefined,
+        endTime: undefined,
         "publisher": 0,
-        releaseTime: new Date(),
+        releaseTime: undefined,
         "resourceRoute": "",
         "status": 0,
         "workId": 0
       },
       releaseNow: false,
-      memberList: {//TODO 根据 获取队伍设置接口创建该对象
+      memberList: {
         "小组长": 0,
-        "开发经理": 1
+        "质量经理": 1,
+        "开发经理": 2,
+        "产品经理": 3,
+        "测试经理": 4
       }
     }
   },
@@ -74,7 +77,7 @@ export default {
       const file = e.target.files[0];
       const formData = new FormData();
       formData.append("file", file)
-      this.$axios.post("/api//work/resource/" + "4", formData, {
+      this.$axios.post("/api//work/resource/" + "0", formData, {
         'Content-type': 'multipart/form-data'
       }).then(res => {
         this.workData.resourceRoute = res.data.data
@@ -82,19 +85,27 @@ export default {
     },
     submitWork() {
       if (this.releaseNow) {
-        let now = dayjs().subtract(1, "minute")
-            .format("YYYY-MM-DD HH:mm:ss")
-        this.workData.releaseTime = now
+        this.workData.releaseTime = dayjs().startOf('m').format("YYYY-MM-DD HH:mm:ss")
+      }
+      for (let key in this.workData) {
+        if (key === "resourceRoute")
+          continue
+        if (this.workData[key] === undefined || this.workData[key] === "") {
+          ElMessageBox.alert(`有项目未填`, `提示`, {
+            confirmButtonText: 'OK',
+          })
+          return
+        }
       }
       this.$axios.post("/api/work/study/create", this.workData
       ).then(res => {
-          if (res.status===0){
-              ElMessageBox.alert(`创建成功(确认后应该跳回主页)`, `提示`, {
-                  confirmButtonText: 'OK',
-              }).then(res=>{
-                  this.$router.push("/")
-              })
-          }
+        if (res.data.status === 0) {
+          ElMessageBox.alert(`创建成功`, `提示`, {
+            confirmButtonText: 'OK',
+          }).then(res => {
+            this.$router.push("/")
+          })
+        }
       })
     }
   },

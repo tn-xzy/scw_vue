@@ -8,22 +8,40 @@
             <el-descriptions-item label="状态">{{ work.status }}</el-descriptions-item>
             <el-descriptions-item label="操作">
                 <el-button @click="checkSubmit(work)">查看提交情况</el-button>
-                <el-button>修改任务</el-button>
+                <el-button>
+                    <del>修改任务</del>
+                </el-button>
             </el-descriptions-item>
         </el-descriptions>
         <div v-show="work.show===true">
-            <el-descriptions title="任务提交" v-for="teamwork in teamWorks" :key="work.teamWorkId" v-if="teamwork.status===1"
-                             border>
-                <el-descriptions-item label="团队">{{ teamwork.belongTeam }}</el-descriptions-item>
-                <el-descriptions-item label="任务描述">{{ teamwork.workDescription }}</el-descriptions-item>
-                <el-descriptions-item label="提交成果">{{ teamwork.productionRoute }}</el-descriptions-item>
-                <el-descriptions-item label="批注">{{ teamwork.productionRoute }}</el-descriptions-item>
-                <el-descriptions-item label="成绩">{{ teamwork.productionRoute }}</el-descriptions-item>
-                <el-descriptions-item label="操作">
-                    <el-button>提交</el-button>
-                    <el-button @click="closeChecking">关闭</el-button>
-                </el-descriptions-item>
-            </el-descriptions>
+            <template v-for="teamwork in work.teamWorks" :key="teamwork.teamWorkId">
+                <el-descriptions title="任务提交"
+                                 v-if="teamwork.status===1&&(teamwork.comment&&teamwork.comment.status===0)" border>
+                    <el-descriptions-item label="团队">{{ teamwork.belongTeam }}</el-descriptions-item>
+                    <el-descriptions-item label="任务描述">{{ teamwork.workDescription }}</el-descriptions-item>
+                    <el-descriptions-item label="提交成果"><a
+                            :href="teamwork.productionRoute">{{ teamwork.productionRoute.split("/").pop() }}</a>
+                    </el-descriptions-item>
+                    <el-descriptions-item label="批注">
+                        <el-input v-model="teamwork.description"></el-input>
+                    </el-descriptions-item>
+                    <el-descriptions-item label="成绩">
+                        <el-input v-model="teamwork.score" type="number"></el-input>
+                    </el-descriptions-item>
+                    <el-descriptions-item label="操作">
+                        <el-button @click="submitScore(teamwork)">提交</el-button>
+                        <el-button @click="closeChecking">关闭</el-button>
+                    </el-descriptions-item>
+                </el-descriptions>
+                <el-descriptions title="任务提交" v-else-if="teamwork.status!==1" border>
+                    <el-descriptions-item label="团队">{{ teamwork.belongTeam }}</el-descriptions-item>
+                    <el-descriptions-item label="提交情况">该团队未提交结果</el-descriptions-item>
+                </el-descriptions>
+                <el-descriptions title="批阅结果" v-else-if="teamwork.comment&&teamwork.comment.status!==0" border>
+                    <el-descriptions-item label="批注">{{teamwork.comment.description}}</el-descriptions-item>
+                    <el-descriptions-item label="分数">{{teamwork.comment.score}}</el-descriptions-item>
+                </el-descriptions>
+            </template>
         </div>
     </div>
 </template>
@@ -35,7 +53,6 @@ export default {
   name: "管理学习任务",
   data() {
     return {
-        checking:false,
       workList: [
         {
           "workId": 1067298516,
@@ -45,6 +62,15 @@ export default {
           "endTime": "2023-06-01 00:00:00",
           "resourceRoute": "http://127.0.0.1:8081/static/study_work/resource/2035060729 谢卓越 实验二(1).docx",
           "status": 1,
+          "teamWorks": [
+            {
+              "teamWorkId": 1067299092,
+              "workDescription": "123",
+              "productionRoute": "321/213",
+              "belongTeam": 1,
+              "belongWork": 1067298516,
+              "status": 1
+            }]
         },
         {
           "workId": 1334868820,
@@ -53,39 +79,90 @@ export default {
           "releaseTime": "2023-05-16 20:27:00",
           "endTime": "2023-06-01 00:00:00",
           "resourceRoute": "http://127.0.0.1:8081/static/study_work/resource/2035060729 谢卓越 实验二(1).docx",
-          "status": 1
+          "status": 1,
+          "teamWorks": [
+            {
+              "teamWorkId": 1067299092,
+              "workDescription": null,
+              "productionRoute": null,
+              "belongTeam": 1,
+              "belongWork": 1067298516,
+              "status": 0
+            }]
         }
       ],
-      "teamWorks": [
-        {
-          "teamWorkId": 1067299092,
-          "workDescription": null,
-          "productionRoute": null,
-          "belongTeam": 1,
-          "belongWork": 1067298516,
-          "status": 1
-        }
-      ]
+      operatingWork: undefined
     }
   },
-    methods:{
-      checkSubmit(work){
-          if (this.checking){
-              ElMessageBox.alert(`你正在批阅其他团队的任务`, `提示`, {
+  methods: {
+    checkSubmit(work) {
+      if (this.operatingWork === work) {
+        this.closeChecking()
+        return;
+      }
+      if (this.checking) {
+        ElMessageBox.alert(`你正在批阅其他团队的任务`, `提示`, {
+          confirmButtonText: 'OK',
+        })
+        return
+      }
+      this.operatingWork = work
+      work.show = true
+    },
+    closeChecking() {
+      if (this.operatingWork !== undefined) {
+        this.operatingWork.show = false
+        this.operatingWork = undefined
+      }
+    },
+    submitScore(teamwork) {
+      this.$axios.post("/api/work/comment/2", {
+        "belongTeamWork": teamwork.teamWorkId,
+        "description": teamwork.description,
+        "score": teamwork.score,
+        "status": 1
+      }).then(res=>{
+          if (res.data.status===1){
+              ElMessageBox.alert(`提交成功`, `提示`, {
                   confirmButtonText: 'OK',
               })
-              return
           }
-          this.checking=true
-          work.show=true
-      },
-      closeChecking(){
-          this.checking=false
-          this.workList.forEach(work=>{
-              work.show=false
+          console.log(res)
+      })
+    },
+    loadAllWorks() {
+      this.$axios.get("/api/work/study/all")
+          .then(res => {
+            let workList = res.data.data
+              workList.sort(function(a, b) {
+                  var dateA = new Date(a.releaseTime);
+                  var dateB = new Date(b.releaseTime);
+                  return dateB - dateA;
+              });
+            this.workList = workList
+            for (let work of workList) {
+              this.$axios.get("/api/work/study/concrete/" + work.workId)
+                  .then(res => {
+                      let teamWorks=res.data.data.teamWorks
+                      for (let w of teamWorks){
+                          if (w.status===1){
+                              this.$axios.get("/api/work/comment/"+w.teamWorkId)
+                                  .then(res=>{
+                                      w.comment=res.data.data
+                                  })
+                          }
+                      }
+                    work.teamWorks = teamWorks
+                  })
+                // this.$axios.get("/api/work/comment/{teamworkID}")
+            }
+
           })
-      }
     }
+  },
+  mounted() {
+    this.loadAllWorks()
+  }
 }
 </script>
 
