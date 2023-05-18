@@ -17,6 +17,13 @@ axios.defaults.headers.common['token'] = localStorage.getItem("token")
 axios.interceptors.response.use(function (res) {
   if (res.data.status!==0){
     console.log("inter",res)
+    if (res.data.status===undefined){
+      ElMessageBox.alert(`请重新登录`, `错误状态码：${res.data.status}`, {
+        confirmButtonText: 'OK',
+        dangerouslyUseHTMLString: true,
+      })
+      return res
+    }
     ElMessageBox.alert(`<p>简要描述:${res.data.description}</p>
     <p>错误信息:${res.data.data}</p>`, `错误状态码：${res.data.status}`, {
       confirmButtonText: 'OK',
@@ -27,7 +34,7 @@ axios.interceptors.response.use(function (res) {
 }, function (error) {
     console.log("inter",error)
     ElMessageBox.alert(`<p>简要描述:${error.message}</p>
-    <p>错误信息:${error}</p>`, `错误状态码：${error.code}`, {
+    <p>错误信息:${error}</p>`, `错误类型：${error.code}`, {
       confirmButtonText: 'OK',
       dangerouslyUseHTMLString: true,
     })

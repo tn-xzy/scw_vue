@@ -76,7 +76,7 @@
                     <div v-show="userInfo.userType==='student'">所属团队:{{ userInfo.userTeam }}</div>
                 </div>
             </div>
-            <div class="announce-box round-border" @click="$router.push('/test')">
+            <div class="announce-box round-border">
                 <div class="bar-box">
                     <span>未读通知</span>
                     <el-button @click="readAllNotification">全部已读</el-button>

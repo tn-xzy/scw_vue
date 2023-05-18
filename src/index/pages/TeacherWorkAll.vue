@@ -12,13 +12,13 @@
             </el-descriptions-item>
         </el-descriptions>
         <div v-show="work.show===true">
-            <el-descriptions title="任务提交" v-for="work in teamWorks" :key="work.teamWorkId" v-if="work.status===1"
+            <el-descriptions title="任务提交" v-for="teamwork in teamWorks" :key="work.teamWorkId" v-if="teamwork.status===1"
                              border>
-                <el-descriptions-item label="团队">{{ work.belongTeam }}</el-descriptions-item>
-                <el-descriptions-item label="任务描述">{{ work.workDescription }}</el-descriptions-item>
-                <el-descriptions-item label="提交成果">{{ work.productionRoute }}</el-descriptions-item>
-                <el-descriptions-item label="批注">{{ work.productionRoute }}</el-descriptions-item>
-                <el-descriptions-item label="成绩">{{ work.productionRoute }}</el-descriptions-item>
+                <el-descriptions-item label="团队">{{ teamwork.belongTeam }}</el-descriptions-item>
+                <el-descriptions-item label="任务描述">{{ teamwork.workDescription }}</el-descriptions-item>
+                <el-descriptions-item label="提交成果">{{ teamwork.productionRoute }}</el-descriptions-item>
+                <el-descriptions-item label="批注">{{ teamwork.productionRoute }}</el-descriptions-item>
+                <el-descriptions-item label="成绩">{{ teamwork.productionRoute }}</el-descriptions-item>
                 <el-descriptions-item label="操作">
                     <el-button>提交</el-button>
                     <el-button @click="closeChecking">关闭</el-button>

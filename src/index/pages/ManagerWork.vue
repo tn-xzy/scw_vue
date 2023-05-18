@@ -53,8 +53,8 @@
                 <input type="file" @change="uploadFile($event,work)">
             </el-descriptions-item>
             <el-descriptions-item label="操作">
-                <el-button @click="submitPersonWork(work)">更新</el-button>
-                <el-button @click="submitPersonWork(work)">提交</el-button>
+                <el-button @click="teamWorkSave(work)">更新</el-button>
+                <el-button @click="teamWorkSubmit(work)">提交</el-button>
                 <el-button @click="closeChecking">关闭</el-button>
             </el-descriptions-item>
         </el-descriptions>
@@ -117,6 +117,8 @@ export default {
                       workMap.get(work.belongWork).singleWorks = work.singleWorks
                       workMap.get(work.belongWork).workDescription = work.workDescription
                       workMap.get(work.belongWork).productionRoute = work.productionRoute
+                      workMap.get(work.belongWork).belongWork = work.belongWork
+                      workMap.get(work.belongWork).belongTeam = work.belongTeam
                     }
                   }
                   this.workList = workList
@@ -146,17 +148,43 @@ export default {
       }
     },
     uploadFile(e, work) {
+      console.log("upload", e)
       const file = e.target.files[0];
       const formData = new FormData();
       formData.append("file", file)
-      this.$axios.post("/api//work/resource/" + "4", formData, {
+      this.$axios.post("/api/work/resource/" + "3", formData, {
         'Content-type': 'multipart/form-data'
       }).then(res => {
+        console.log("upload", res)
         work.productionRoute = res.data.data
       })
     },
-    finalSave(work) {
-
+    teamWorkSave(work) {
+      console.log(work)
+      this.$axios.post("/api/work/team/modify/1", {
+        "belongTeam": work.belongTeam,
+        "belongWork": work.belongWork,
+        "productionRoute": work.productionRoute,
+        "status": 0,
+        "teamWorkId": work.teamWorkId,
+        "workDescription": work.workDescription
+      }).then(res => {
+        console.log(res)
+        //TODO 用ElElMessageBox提示一下成功
+      })
+    },
+    teamWorkSubmit(work) {
+      this.$axios.post("/api/work/team/modify/2", {
+        "belongTeam": work.belongTeam,
+        "belongWork": work.belongWork,
+        "productionRoute": work.productionRoute,
+        "status": 1,
+        "teamWorkId": work.teamWorkId,
+        "workDescription": work.workDescription
+      }).then(res => {
+        console.log(res)
+        //TODO 用ElElMessageBox提示一下成功
+      })
     },
     submitTeamWork(work) {
       if (this.operatingWork === work) {
