@@ -67,7 +67,7 @@
                 <input type="file" @change="uploadFile($event,work)">
             </el-descriptions-item>
             <el-descriptions-item label="操作">
-                <el-button @click="teamWorkSave(work)" type="primary">更新</el-button>
+                <el-button @click="teamWorkSave(work)" type="primary">保存</el-button>
                 <el-button @click="teamWorkSubmit(work)" type="primary">提交</el-button>
                 <el-button @click="closeChecking" type="primary">关闭</el-button>
             </el-descriptions-item>
@@ -265,9 +265,11 @@ export default {
       this.teamWork.workDescription = work.workDescription
     },
     id2work(id) {
-
-      //TODO 查this.memberList根据id返回职责
-      return "小组长"//随便返回一下，写好了记得删掉
+      var keys = Object.keys(this.memberList); // ["a", "b", "c"]
+      for (var i = 0; i < keys.length; i++) {
+        if(this.memberList[keys[i]]==id) return keys[i]
+      }
+      return "小组长"
     },
     loadTeamMember() {
       //TODO 根据 获取队伍设置接口和获取所在团队信息接口创建this.memberList

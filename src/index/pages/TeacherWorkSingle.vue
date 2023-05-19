@@ -74,12 +74,14 @@ export default {
   },
   methods: {
     uploadFile(e) {
+      console.log("upload",e)
       const file = e.target.files[0];
       const formData = new FormData();
       formData.append("file", file)
       this.$axios.post("/api//work/resource/" + "0", formData, {
         'Content-type': 'multipart/form-data'
       }).then(res => {
+        console.log("up file",res)
         this.workData.resourceRoute = res.data.data
       })
     },
