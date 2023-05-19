@@ -239,6 +239,7 @@ export default {
       }).then(res => {
         console.log(res)
         this.loadAllWorks()
+        this.closeChecking()
         ElMessageBox.alert(`成功`, `提示`, {
           confirmButtonText: 'OK',
         })
