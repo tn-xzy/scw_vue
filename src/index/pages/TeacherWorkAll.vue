@@ -7,8 +7,8 @@
             <el-descriptions-item label="任务文档"><a :href="work.resourceRoute">下载</a></el-descriptions-item>
             <el-descriptions-item label="状态">{{ work.status }}</el-descriptions-item>
             <el-descriptions-item label="操作">
-                <el-button @click="checkSubmit(work)">查看提交情况</el-button>
-                <el-button>
+                <el-button @click="checkSubmit(work)" type="primary">查看提交情况</el-button>
+                <el-button type="primary">
                     <del>修改任务</del>
                 </el-button>
             </el-descriptions-item>
@@ -29,8 +29,8 @@
                         <el-input v-model="teamwork.score" type="number"></el-input>
                     </el-descriptions-item>
                     <el-descriptions-item label="操作">
-                        <el-button @click="submitScore(teamwork)">提交</el-button>
-                        <el-button @click="closeChecking">关闭</el-button>
+                        <el-button @click="submitScore(teamwork)" type="primary">提交</el-button>
+                        <el-button @click="closeChecking" type="primary">关闭</el-button>
                     </el-descriptions-item>
                 </el-descriptions>
                 <el-descriptions title="任务提交" v-else-if="teamwork.status!==1" border>

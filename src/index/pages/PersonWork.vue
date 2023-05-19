@@ -18,8 +18,8 @@
                 <input type="file" style="margin-left: 20px" @change="uploadFile($event,work)"/>
             </el-descriptions-item>
             <el-descriptions-item label="操作">
-                <el-button @click="saveWork(work)">保存</el-button>
-                <el-button @click="submitWork(work)">提交</el-button>
+                <el-button @click="saveWork(work)" type="primary">保存</el-button>
+                <el-button @click="submitWork(work)" type="primary">提交</el-button>
             </el-descriptions-item>
         </el-descriptions>
     </div>

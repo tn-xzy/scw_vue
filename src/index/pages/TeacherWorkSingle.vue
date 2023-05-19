@@ -39,7 +39,7 @@
                 <input type="file" @change="uploadFile">
             </el-descriptions-item>
             <el-descriptions-item label="操作">
-                <el-button @click="submitWork">提交</el-button>
+                <el-button @click="submitWork" type="primary">提交</el-button>
             </el-descriptions-item>
         </el-descriptions>
     </div>

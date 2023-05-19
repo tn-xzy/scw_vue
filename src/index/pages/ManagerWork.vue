@@ -9,9 +9,9 @@
                 }}</a></el-descriptions-item>
             <el-descriptions-item label="状态">{{ status2description(work.status) }}</el-descriptions-item>
             <el-descriptions-item label="操作" v-if="work.teamWorkId!==undefined && work.submitStatus!==1">
-                <el-button @click="createPersonWork(work)">创建个人任务</el-button>
-                <el-button @click="checkCompleteness(work)">查看完成情况</el-button>
-                <el-button @click="submitTeamWork(work)">提交团队任务</el-button>
+                <el-button @click="createPersonWork(work)" type="primary">创建个人任务</el-button>
+                <el-button @click="checkCompleteness(work)" type="primary">查看完成情况</el-button>
+                <el-button @click="submitTeamWork(work)" type="primary">提交团队任务</el-button>
             </el-descriptions-item>
             <template v-if="work.submitStatus===1&&work.comment!==null">
                 <el-descriptions-item label="成绩">
@@ -35,8 +35,8 @@
                 <el-input v-model="personWork.workDescription"></el-input>
             </el-descriptions-item>
             <el-descriptions-item label="操作">
-                <el-button @click="submitPersonWork(work)">发布</el-button>
-                <el-button @click="closeChecking">关闭</el-button>
+                <el-button @click="submitPersonWork(work)" type="primary">发布</el-button>
+                <el-button @click="closeChecking" type="primary">关闭</el-button>
             </el-descriptions-item>
         </el-descriptions>
         <el-descriptions title="查看完成情况" border v-show="work.showCompleteness===true" :column="4">
@@ -67,9 +67,9 @@
                 <input type="file" @change="uploadFile($event,work)">
             </el-descriptions-item>
             <el-descriptions-item label="操作">
-                <el-button @click="teamWorkSave(work)">更新</el-button>
-                <el-button @click="teamWorkSubmit(work)">提交</el-button>
-                <el-button @click="closeChecking">关闭</el-button>
+                <el-button @click="teamWorkSave(work)" type="primary">更新</el-button>
+                <el-button @click="teamWorkSubmit(work)" type="primary">提交</el-button>
+                <el-button @click="closeChecking" type="primary">关闭</el-button>
             </el-descriptions-item>
         </el-descriptions>
     </div>
@@ -263,6 +263,7 @@ export default {
       this.teamWork.workDescription = work.workDescription
     },
     id2work(id) {
+
       //TODO 查this.memberList根据id返回职责
       return "小组长"//随便返回一下，写好了记得删掉
     },
