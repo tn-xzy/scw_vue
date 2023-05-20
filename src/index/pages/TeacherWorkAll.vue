@@ -116,6 +116,12 @@ export default {
       }
     },
     submitScore(teamwork) {
+        if (teamwork.description===null||teamwork.score===null){
+            ElMessageBox.alert(`有项目未填`, `提示`, {
+                confirmButtonText: 'OK',
+            })
+            return
+        }
       this.$axios.post("/api/work/comment/2", {
         "belongTeamWork": teamwork.teamWorkId,
         "description": teamwork.description,

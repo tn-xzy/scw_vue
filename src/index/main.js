@@ -2,7 +2,7 @@ import {createApp} from 'vue'
 import App from './index.vue'
 import * as VueRouter from 'vue-router'
 import router from './router'
-import axios from 'axios'
+import axios, {request} from 'axios'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 import {ElMessage, ElMessageBox} from "element-plus";
 import 'element-plus/dist/index.css'
@@ -16,10 +16,11 @@ if (localStorage.getItem("token") === null)
   window.location.href = '/login.html'
 axios.defaults.headers.common['token'] = localStorage.getItem("token")
 axios.interceptors.request.use(function (config) {
-  console.debug("拦截响应-请求配置", config)
+  console.debug("拦截响应-请求配置"+config.url, config)
+  return config
 })
 axios.interceptors.response.use(function (res) {
-  console.debug("拦截响应-请求响应", res)
+  console.debug("拦截响应-请求响应"+request.responseURL, res)
   if (res.data.status !== 0) {
     if (res.data.status === undefined) {
       ElMessageBox.alert(`请重新登录`, `错误状态码：${res.data.status}`, {
