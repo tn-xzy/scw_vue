@@ -74,6 +74,7 @@ export default {
   },
   methods: {
     uploadFile(e) {
+      console.log("上传文件", e)
       const file = e.target.files[0];
       const formData = new FormData();
       formData.append("file", file)

@@ -4,7 +4,7 @@
             <el-descriptions-item label="内容">{{ work.content }}</el-descriptions-item>
             <el-descriptions-item label="发布时间">{{ work.releaseTime }}</el-descriptions-item>
             <el-descriptions-item label="截止时间">{{ work.endTime }}</el-descriptions-item>
-            <el-descriptions-item label="任务文档"><a :href="work.resourceRoute">下载</a></el-descriptions-item>
+            <el-descriptions-item label="任务文档"><a :href="work.resourceRoute">{{work.resourceRoute.split("/").pop()}}</a></el-descriptions-item>
             <el-descriptions-item label="状态">{{ work.status }}</el-descriptions-item>
             <el-descriptions-item label="操作">
                 <el-button @click="checkSubmit(work)" type="primary">查看提交情况</el-button>
@@ -122,12 +122,12 @@ export default {
         "score": teamwork.score,
         "status": 1
       }).then(res=>{
-          if (res.data.status===1){
+          this.closeChecking()
+          if (res.data.status===0){
               ElMessageBox.alert(`提交成功`, `提示`, {
                   confirmButtonText: 'OK',
               })
           }
-          console.log(res)
       })
     },
     loadAllWorks() {
