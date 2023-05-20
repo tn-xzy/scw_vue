@@ -124,7 +124,7 @@ export default {
     getUserInfo() {
       this.$axios.get("/api/user/information")
           .then(resp => {
-            console.log(resp)
+            //console.log(resp)
             this.userInfo = resp.data.data
           })
     },

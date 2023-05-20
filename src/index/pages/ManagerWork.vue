@@ -162,7 +162,7 @@ export default {
                     }
                   }
                   this.workList = workList
-                  console.log(workList)
+                  //console.log(workList)
                 })
           })
     },
@@ -196,7 +196,7 @@ export default {
       this.$axios.post("/api/work/resource/" + "3", formData, {
         'Content-type': 'multipart/form-data'
       }).then(res => {
-        console.log("upload", res)
+       // console.log("upload", res)
         work.productionRoute = res.data.data
       })
     },
@@ -216,7 +216,7 @@ export default {
         "teamWorkId": work.teamWorkId,
         "workDescription": work.workDescription
       }).then(res => {
-        console.log(res)
+       // console.log(res)
         ElMessageBox.alert(`成功`, `提示`, {
           confirmButtonText: 'OK',
         })
@@ -237,7 +237,7 @@ export default {
         "teamWorkId": work.teamWorkId,
         "workDescription": work.workDescription
       }).then(res => {
-        console.log(res)
+        //console.log(res)
         this.loadAllWorks()
         this.closeChecking()
         ElMessageBox.alert(`成功`, `提示`, {

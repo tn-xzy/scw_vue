@@ -2,7 +2,8 @@ import {createApp} from 'vue'
 import App from './index.vue'
 import * as VueRouter from 'vue-router'
 import router from './router'
-import axios, {request} from 'axios'
+import axios
+  from 'axios'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 import {ElMessage, ElMessageBox} from "element-plus";
 import 'element-plus/dist/index.css'
@@ -20,7 +21,7 @@ axios.interceptors.request.use(function (config) {
   return config
 })
 axios.interceptors.response.use(function (res) {
-  console.debug("拦截响应-请求响应"+request.responseURL, res)
+  console.debug("拦截响应-请求响应"+res.request.responseURL, res)
   if (res.data.status !== 0) {
     if (res.data.status === undefined) {
       ElMessageBox.alert(`请重新登录`, `错误状态码：${res.data.status}`, {
