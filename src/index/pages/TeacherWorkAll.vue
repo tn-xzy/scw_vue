@@ -116,7 +116,7 @@ export default {
       }
     },
     submitScore(teamwork) {
-        if (teamwork.description===null||teamwork.score===null){
+        if (teamwork.description===undefined||teamwork.score===undefined){
             ElMessageBox.alert(`有项目未填`, `提示`, {
                 confirmButtonText: 'OK',
             })
