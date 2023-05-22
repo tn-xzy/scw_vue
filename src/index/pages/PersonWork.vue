@@ -69,14 +69,14 @@ export default {
       const formData = new FormData();
       formData.append("file", file)
       formData.append("type", 4)
-      this.$axios.post("/api//work/resource/" + "4", formData, {
+      this.$axios.post("//work/resource/" + "4", formData, {
         'Content-type': 'multipart/form-data'
       }).then(res => {
         work.productionRoute = res.data.data
       })
     },
     loadAllPersonWorks() {
-      this.$axios.get("/api/work/single/response")
+      this.$axios.get("/work/single/response")
           .then(res => {
             this.workList = res.data.data
           })
@@ -88,7 +88,7 @@ export default {
         })
         return
       }
-      this.$axios.post("/api/work/single/modify/2", {
+      this.$axios.post("/work/single/modify/2", {
         "belongStudent": work.belongStudent,
         "belongWork": work.belongWork,
         "productionRoute": work.productionRoute,
@@ -111,7 +111,7 @@ export default {
         })
         return
       }
-      this.$axios.post("/api/work/single/modify/3", {
+      this.$axios.post("/work/single/modify/3", {
         "belongStudent": work.belongStudent,
         "belongWork": work.belongWork,
         "productionRoute": work.productionRoute,

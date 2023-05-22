@@ -105,7 +105,7 @@ export default {
         })
         return
       }
-      this.$axios.post("/api/work/single/create",
+      this.$axios.post("/work/single/create",
           this.personWork)
           .then(res => {
             if (res.data.status === 0) {
@@ -124,7 +124,7 @@ export default {
       this.reloadWork(work)
     },
     reloadWork(work) {
-      this.$axios.get("/api/work/team/response")
+      this.$axios.get("/work/team/response")
           .then(res => {
             let responsibleWorkList = res.data.data
             for (let responsibleWork of responsibleWorkList) {
@@ -135,7 +135,7 @@ export default {
           })
     },
     loadAllWorks() {
-      this.$axios.get("/api/work/study/all")
+      this.$axios.get("/work/study/all")
           .then(res => {
             let workList = res.data.data
             workList.sort(function (a, b) {
@@ -146,7 +146,7 @@ export default {
             let workMap = new Map()
             for (let work of workList)
               workMap.set(work.workId, work)
-            this.$axios.get("/api/work/team/response")
+            this.$axios.get("/work/team/response")
                 .then(res => {
                   let responsibleWorkList = res.data.data
                   for (let work of responsibleWorkList) {
@@ -193,7 +193,7 @@ export default {
       const file = e.target.files[0];
       const formData = new FormData();
       formData.append("file", file)
-      this.$axios.post("/api/work/resource/" + "3", formData, {
+      this.$axios.post("/work/resource/" + "3", formData, {
         'Content-type': 'multipart/form-data'
       }).then(res => {
        // console.log("upload", res)
@@ -208,7 +208,7 @@ export default {
         })
         return
       }
-      this.$axios.post("/api/work/team/modify/1", {
+      this.$axios.post("/work/team/modify/1", {
         "belongTeam": work.belongTeam,
         "belongWork": work.belongWork,
         "productionRoute": work.productionRoute,
@@ -229,7 +229,7 @@ export default {
         })
         return
       }
-      this.$axios.post("/api/work/team/modify/2", {
+      this.$axios.post("/work/team/modify/2", {
         "belongTeam": work.belongTeam,
         "belongWork": work.belongWork,
         "productionRoute": work.productionRoute,

@@ -4,13 +4,11 @@
             <el-descriptions-item label="内容">{{ work.content }}</el-descriptions-item>
             <el-descriptions-item label="发布时间">{{ work.releaseTime }}</el-descriptions-item>
             <el-descriptions-item label="截止时间">{{ work.endTime }}</el-descriptions-item>
-            <el-descriptions-item label="任务文档"><a :href="work.resourceRoute">{{work.resourceRoute.split("/").pop()}}</a></el-descriptions-item>
-            <el-descriptions-item label="状态">{{ work.status }}</el-descriptions-item>
+            <el-descriptions-item label="任务文档"><a
+                    :href="work.resourceRoute">{{ work.resourceRoute.split("/").pop() }}</a></el-descriptions-item>
+            <el-descriptions-item label="状态">{{ status2description(work.status) }}</el-descriptions-item>
             <el-descriptions-item label="操作">
                 <el-button @click="checkSubmit(work)" type="primary">查看提交情况</el-button>
-                <el-button type="primary">
-                    <del>修改任务</del>
-                </el-button>
             </el-descriptions-item>
         </el-descriptions>
         <div v-show="work.show===true">
@@ -38,8 +36,8 @@
                     <el-descriptions-item label="提交情况">该团队未提交结果</el-descriptions-item>
                 </el-descriptions>
                 <el-descriptions title="批阅结果" v-else-if="teamwork.comment&&teamwork.comment.status!==0" border>
-                    <el-descriptions-item label="批注">{{teamwork.comment.description}}</el-descriptions-item>
-                    <el-descriptions-item label="分数">{{teamwork.comment.score}}</el-descriptions-item>
+                    <el-descriptions-item label="批注">{{ teamwork.comment.description }}</el-descriptions-item>
+                    <el-descriptions-item label="分数">{{ teamwork.comment.score }}</el-descriptions-item>
                 </el-descriptions>
             </template>
         </div>
@@ -48,12 +46,13 @@
 
 <script>
 import {ElMessageBox} from "element-plus";
+import {status2description} from "../utils.js";
 
 export default {
   name: "管理学习任务",
   data() {
     return {
-      workList: [
+      workList1: [
         {
           "workId": 1067298516,
           "publisher": 0,//负责人
@@ -91,10 +90,12 @@ export default {
             }]
         }
       ],
+      workList: [],
       operatingWork: undefined
     }
   },
   methods: {
+    status2description,
     checkSubmit(work) {
       if (this.operatingWork === work) {
         this.closeChecking()
@@ -116,51 +117,51 @@ export default {
       }
     },
     submitScore(teamwork) {
-        if (teamwork.description===undefined||teamwork.score===undefined){
-            ElMessageBox.alert(`有项目未填`, `提示`, {
-                confirmButtonText: 'OK',
-            })
-            return
-        }
-      this.$axios.post("/api/work/comment/2", {
+      if (teamwork.description === undefined || teamwork.score === undefined) {
+        ElMessageBox.alert(`有项目未填`, `提示`, {
+          confirmButtonText: 'OK',
+        })
+        return
+      }
+      this.$axios.post("/work/comment/2", {
         "belongTeamWork": teamwork.teamWorkId,
         "description": teamwork.description,
         "score": teamwork.score,
         "status": 1
-      }).then(res=>{
-          this.closeChecking()
-          if (res.data.status===0){
-              ElMessageBox.alert(`提交成功`, `提示`, {
-                  confirmButtonText: 'OK',
-              })
-          }
+      }).then(res => {
+        this.closeChecking()
+        if (res.data.status === 0) {
+          ElMessageBox.alert(`提交成功`, `提示`, {
+            confirmButtonText: 'OK',
+          })
+        }
       })
     },
     loadAllWorks() {
-      this.$axios.get("/api/work/study/all")
+      this.$axios.get("/work/study/all")
           .then(res => {
             let workList = res.data.data
-              workList.sort(function(a, b) {
-                  var dateA = new Date(a.releaseTime);
-                  var dateB = new Date(b.releaseTime);
-                  return dateB - dateA;
-              });
+            workList.sort(function (a, b) {
+              var dateA = new Date(a.releaseTime);
+              var dateB = new Date(b.releaseTime);
+              return dateB - dateA;
+            });
             this.workList = workList
             for (let work of workList) {
-              this.$axios.get("/api/work/study/concrete/" + work.workId)
+              this.$axios.get("/work/study/concrete/" + work.workId)
                   .then(res => {
-                      let teamWorks=res.data.data.teamWorks
-                      for (let w of teamWorks){
-                          if (w.status===1){
-                              this.$axios.get("/api/work/comment/"+w.teamWorkId)
-                                  .then(res=>{
-                                      w.comment=res.data.data
-                                  })
-                          }
+                    let teamWorks = res.data.data.teamWorks
+                    for (let w of teamWorks) {
+                      if (w.status === 1) {
+                        this.$axios.get("/work/comment/" + w.teamWorkId)
+                            .then(res => {
+                              w.comment = res.data.data
+                            })
                       }
+                    }
                     work.teamWorks = teamWorks
                   })
-                // this.$axios.get("/api/work/comment/{teamworkID}")
+              // this.$axios.get("/work/comment/{teamworkID}")
             }
 
           })

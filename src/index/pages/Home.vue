@@ -122,7 +122,7 @@ export default {
   },
   methods: {
     getUserInfo() {
-      this.$axios.get("/api/user/information")
+      this.$axios.get("/user/information")
           .then(resp => {
             //console.log(resp)
             this.userInfo = resp.data.data

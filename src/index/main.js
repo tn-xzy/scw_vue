@@ -17,6 +17,8 @@ if (localStorage.getItem("token") === null)
   window.location.href = '/login.html'
 axios.defaults.headers.common['token'] = localStorage.getItem("token")
 axios.interceptors.request.use(function (config) {
+  const baseURL = import.meta.env.VITE_API_URL
+  config.url = baseURL + config.url
   console.debug("拦截响应-请求配置"+config.url, config)
   return config
 })
@@ -36,7 +38,6 @@ axios.interceptors.response.use(function (res) {
       })
     }
   }
-  return res;
 }, function (error) {
   console.debug("拦截响应-请求报错", error)
   ElMessageBox.alert(`<p>简要描述:${error.message}</p>
@@ -44,7 +45,6 @@ axios.interceptors.response.use(function (res) {
     confirmButtonText: 'OK',
     dangerouslyUseHTMLString: true,
   })
-  return Promise.reject(error);
 });
 app.config.globalProperties.$axios = axios
 // app.use(ElementPlus)
