@@ -1,5 +1,5 @@
 <template>
-    <div class="main-box">
+    <div class="main-box" >
         <div class="function-box round-border">
             <div class="col-box" v-show="userInfo.userType==='teacher' ||development">
                 <div class="title">教师功能</div>
@@ -17,16 +17,16 @@
                         <div>查看学习任务</div>
                     </div>
                 </div>
-            </div >
+            </div>
             <div class="col-box" v-show="userInfo.userType==='student' ||development">
                 <div class="title">学生功能</div>
                 <div class="list-outer">
-<!--                    <div class="list-inner" @click="$router.push('/StudentTeam')">-->
-<!--                        <el-icon :size="75">-->
-<!--                            <Edit/>-->
-<!--                        </el-icon>-->
-<!--                        <div><del>查看队伍信息</del></div>-->
-<!--                    </div>-->
+                    <!--                    <div class="list-inner" @click="$router.push('/StudentTeam')">-->
+                    <!--                        <el-icon :size="75">-->
+                    <!--                            <Edit/>-->
+                    <!--                        </el-icon>-->
+                    <!--                        <div><del>查看队伍信息</del></div>-->
+                    <!--                    </div>-->
                     <div class="list-inner" @click="$router.push('/ManagerWork')">
                         <el-icon :size="95">
                             <Edit/>
@@ -84,7 +84,7 @@
                 <div v-if="notificationList.length!==0" class="notification-box" v-for="noti in notificationList"
                      :key="notificationList.notId">
                     <p>{{ noti.content }}</p>
-<!--                    <p>内容:{{ noti.notification }}</p>-->
+                    <!--                    <p>内容:{{ noti.notification }}</p>-->
                 </div>
                 <div v-else>
                     当前还没有任何新的通知
@@ -161,6 +161,7 @@ $box-padding: 10px;
 .main-box {
   display: flex;
   height: 100%;
+  background: white;
 
   .round-border {
     border-radius: 10px;
