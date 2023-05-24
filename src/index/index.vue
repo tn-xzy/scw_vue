@@ -11,7 +11,6 @@
 </template>
 
 <script>
-import dayjs from "dayjs";
 
 export default {
   data() {
@@ -34,7 +33,8 @@ export default {
   height: 100%;
   display: flex;
   flex-direction: column;
-    //background: #dedede;
+  background: #f3f3f3;
+
   header {
     display: flex;
     justify-content: space-between;
@@ -48,18 +48,19 @@ export default {
       padding: 10px;
       color: white;
     }
-      :hover{
-          background: #2179d3;
 
-      }
+    :hover {
+      background: #2179d3;
+
+    }
   }
 
   .topmain-box {
     height: calc(100% - 40px - 20px);
     overflow: auto;
     margin: 20px;
-    border-radius: 10px;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, .12), 0 0 6px rgba(0, 0, 0, .04)
+    border-radius: 3px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, .12), 0 0 6px rgba(0, 0, 0, .04)
   }
 }
 </style>

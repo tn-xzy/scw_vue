@@ -1,83 +1,88 @@
 <template>
-    <div class="work-box" v-for="work in workList" :key="work.workId">
-        <el-descriptions title="任务" border>
-            <el-descriptions-item label="内容">{{ work.content }}</el-descriptions-item>
-            <el-descriptions-item label="发布时间">{{ work.releaseTime }}</el-descriptions-item>
-            <el-descriptions-item label="截止时间">{{ work.endTime }}</el-descriptions-item>
-            <el-descriptions-item label="任务文档"><a :href="work.resourceRoute">{{
-                work.resourceRoute.split("/").pop()
-                }}</a></el-descriptions-item>
-            <el-descriptions-item label="状态">{{ status2description(work.status) }}</el-descriptions-item>
-            <el-descriptions-item label="操作" v-if="work.teamWorkId!==undefined && work.submitStatus!==1">
-                <el-button @click="createPersonWork(work)" type="primary">创建个人任务</el-button>
-                <el-button @click="checkCompleteness(work)" type="primary">查看完成情况</el-button>
-                <el-button @click="submitTeamWork(work)" type="primary">提交团队任务</el-button>
-            </el-descriptions-item>
-            <template v-if="work.submitStatus===1&&work.comment!==null">
-                <el-descriptions-item label="成绩">
-                    {{ work.comment.score }}
+    <div class="main-box">
+        <el-skeleton v-show="loading" :rows="5"></el-skeleton>
+        <div class="work-box" v-show="!loading" v-for="work in workList" :key="work.workId">
+            <el-descriptions class="item-mis" border>
+                <el-descriptions-item label="内容">{{ work.content }}</el-descriptions-item>
+                <el-descriptions-item label="发布时间">{{ work.releaseTime }}</el-descriptions-item>
+                <el-descriptions-item label="截止时间">{{ work.endTime }}</el-descriptions-item>
+                <el-descriptions-item label="任务文档"><a :href="work.resourceRoute">{{
+                    work.resourceRoute.split("/").pop()
+                    }}</a></el-descriptions-item>
+                <el-descriptions-item label="状态">{{ status2description(work.status) }}</el-descriptions-item>
+                <el-descriptions-item label="操作" v-if="work.teamWorkId!==undefined && work.submitStatus!==1">
+                    <el-button @click="createPersonWork(work)" type="primary">创建个人任务</el-button>
+                    <el-button @click="checkCompleteness(work)" type="primary">查看完成情况</el-button>
+                    <el-button @click="submitTeamWork(work)" type="primary">提交团队任务</el-button>
                 </el-descriptions-item>
-                <el-descriptions-item label="批注">
-                    {{ work.comment.description }}
+                <template v-if="work.submitStatus===1&&work.comment!==null">
+                    <el-descriptions-item label="成绩">
+                        {{ work.comment.score }}
+                    </el-descriptions-item>
+                    <el-descriptions-item label="批注">
+                        {{ work.comment.description }}
+                    </el-descriptions-item>
+                </template>
+                <el-descriptions-item v-if="work.submitStatus===1&&work.comment==null" label="批阅情况">未批阅
                 </el-descriptions-item>
-            </template>
-            <el-descriptions-item v-if="work.submitStatus===1&&work.comment==null" label="批阅情况">未批阅
-            </el-descriptions-item>
-        </el-descriptions>
-        <el-descriptions title="创建个人任务" border v-show="work.showCreate===true">
-            <el-descriptions-item label="任务所属成员">
-                <el-select v-model="personWork.belongStudent">
-                    <el-option v-for="(v,k,i) in memberList" :key="k" :label="k" :value="v">
-                    </el-option>
-                </el-select>
-            </el-descriptions-item>
-            <el-descriptions-item label="任务描述">
-                <el-input v-model="personWork.workDescription"></el-input>
-            </el-descriptions-item>
-            <el-descriptions-item label="操作">
-                <el-button @click="submitPersonWork(work)" type="primary">发布</el-button>
-                <el-button @click="closeChecking" type="primary">关闭</el-button>
-            </el-descriptions-item>
-        </el-descriptions>
-        <el-descriptions title="查看完成情况" border v-show="work.showCompleteness===true" :column="4">
-            <template v-for="singleWork in work.singleWorks" :key="singleWork.singleWorkId"
-                      v-if="work.singleWorks!==undefined&&work.singleWorks.length!==0">
-                <el-descriptions-item label="任务描述">{{ singleWork.workDescription }}</el-descriptions-item>
-                <el-descriptions-item label="任务人">{{ id2work(singleWork.belongStudent) }}</el-descriptions-item>
-                <el-descriptions-item label="提交情况">{{
-                    status2description(singleWork.status)
-                    }}
+            </el-descriptions>
+            <el-descriptions class="item-box item-person" title="创建个人任务" border v-show="work.showCreate===true">
+                <el-descriptions-item label="任务所属成员">
+                    <el-select v-model="personWork.belongStudent">
+                        <el-option v-for="(v,k,i) in memberList" :key="k" :label="k" :value="v">
+                        </el-option>
+                    </el-select>
                 </el-descriptions-item>
-                <el-descriptions-item label="提交成果"><a
-                        :href="singleWork.productionRoute">{{ singleWork.productionRoute.split("/").pop() }}</a>
+                <el-descriptions-item label="任务描述">
+                    <el-input v-model="personWork.workDescription"></el-input>
                 </el-descriptions-item>
-            </template>
-            <el-descriptions-item label="提交情况" v-else>当前任务下未布置个人任务</el-descriptions-item>
-        </el-descriptions>
-        <el-descriptions title="提交团队任务" border v-show="work.showFinalSubmit===true">
-            <el-descriptions-item label="任务描述">
-                <el-input v-model="work.workDescription"></el-input>
-            </el-descriptions-item>
-            <el-descriptions-item label="当前结果">
-                <a :href="work.productionRoute"
-                   v-if="work.productionRoute">{{ work.productionRoute.split("/").pop() }}</a>
-                <span v-else>当前无成果</span>
-            </el-descriptions-item>
-            <el-descriptions-item label="更新文件">
-                <input type="file" @change="uploadFile($event,work)">
-            </el-descriptions-item>
-            <el-descriptions-item label="操作">
-                <el-button @click="teamWorkSave(work)" type="primary">保存</el-button>
-                <el-button @click="teamWorkSubmit(work)" type="primary">提交</el-button>
-                <el-button @click="closeChecking" type="primary">关闭</el-button>
-            </el-descriptions-item>
-        </el-descriptions>
+                <el-descriptions-item label="操作">
+                    <el-button @click="submitPersonWork(work)" type="primary">发布</el-button>
+                    <el-button @click="closeChecking" type="primary">关闭</el-button>
+                </el-descriptions-item>
+            </el-descriptions>
+            <el-descriptions class="item-box item-com" title="查看完成情况" border v-show="work.showCompleteness===true"
+                             :column="4">
+                <template v-for="singleWork in work.singleWorks" :key="singleWork.singleWorkId"
+                          v-if="work.singleWorks!==undefined&&work.singleWorks.length!==0">
+                    <el-descriptions-item label="任务描述">{{ singleWork.workDescription }}</el-descriptions-item>
+                    <el-descriptions-item label="任务人">{{ id2work(singleWork.belongStudent) }}</el-descriptions-item>
+                    <el-descriptions-item label="提交情况">{{
+                        status2description(singleWork.status)
+                        }}
+                    </el-descriptions-item>
+                    <el-descriptions-item label="提交成果"><a
+                            :href="singleWork.productionRoute">{{ singleWork.productionRoute.split("/").pop() }}</a>
+                    </el-descriptions-item>
+                </template>
+                <el-descriptions-item label="提交情况" v-else>当前任务下未布置个人任务</el-descriptions-item>
+            </el-descriptions>
+            <el-descriptions class="item-box item-con" title="提交团队任务" border v-show="work.showFinalSubmit===true">
+                <el-descriptions-item label="任务描述">
+                    <el-input v-model="work.workDescription"></el-input>
+                </el-descriptions-item>
+                <el-descriptions-item label="当前结果">
+                    <a :href="work.productionRoute"
+                       v-if="work.productionRoute">{{ work.productionRoute.split("/").pop() }}</a>
+                    <span v-else>当前无成果</span>
+                </el-descriptions-item>
+                <el-descriptions-item label="更新文件">
+                    <input type="file" @change="uploadFile($event,work)">
+                </el-descriptions-item>
+                <el-descriptions-item label="操作">
+                    <el-button @click="teamWorkSave(work)" type="primary">保存</el-button>
+                    <el-button @click="teamWorkSubmit(work)" type="primary">提交</el-button>
+                    <el-button @click="closeChecking" type="primary">关闭</el-button>
+                </el-descriptions-item>
+            </el-descriptions>
+        </div>
     </div>
 </template>
 
 <script>
 import {ElMessageBox} from "element-plus";
 import {status2description} from '../utils.js'
+import anime from "animejs";
 
 export default {
   name: "查看负责的团队任务",
@@ -97,6 +102,10 @@ export default {
       work.showCreate = true
       this.personWork.belongWork = work.teamWorkId
       this.operatingWork = work
+      anime({
+        targets: '.item-person',
+        translateY: [-30, 0],
+      })
     },
     submitPersonWork(work) {
       if (this.personWork.belongStudent === undefined || this.personWork.belongWork === undefined) {
@@ -119,9 +128,15 @@ export default {
     checkCompleteness(work) {
       if (work.showCompleteness === true) {
         work.showCompleteness = false
+        this.reloadWork(work)
+      } else {
+        work.showCompleteness = true
+        anime({
+          targets: '.item-com',
+          translateY: [-30, 0],
+        })
       }
-      work.showCompleteness = true
-      this.reloadWork(work)
+
     },
     reloadWork(work) {
       this.$axios.get("/work/team/response")
@@ -162,7 +177,7 @@ export default {
                     }
                   }
                   this.workList = workList
-                  //console.log(workList)
+                  this.loading = false
                 })
           })
     },
@@ -196,7 +211,7 @@ export default {
       this.$axios.post("/work/resource/" + "3", formData, {
         'Content-type': 'multipart/form-data'
       }).then(res => {
-       // console.log("upload", res)
+        // console.log("upload", res)
         work.productionRoute = res.data.data
       })
     },
@@ -216,7 +231,7 @@ export default {
         "teamWorkId": work.teamWorkId,
         "workDescription": work.workDescription
       }).then(res => {
-       // console.log(res)
+        // console.log(res)
         ElMessageBox.alert(`成功`, `提示`, {
           confirmButtonText: 'OK',
         })
@@ -263,11 +278,15 @@ export default {
       this.teamWork.productionRoute = work.productionRoute
       this.teamWork.teamWorkId = work.teamWorkId
       this.teamWork.workDescription = work.workDescription
+      anime({
+        targets: '.item-con',
+        translateY: [-30, 0],
+      })
     },
     id2work(id) {
       var keys = Object.keys(this.memberList); // ["a", "b", "c"]
       for (var i = 0; i < keys.length; i++) {
-        if(this.memberList[keys[i]]==id) return keys[i]
+        if (this.memberList[keys[i]] === id) return keys[i]
       }
       return "小组长"
     },
@@ -278,6 +297,7 @@ export default {
   },
   data() {
     return {
+      loading: true,
       teamWork: {
         "belongTeam": 0,
         "belongWork": 0,
@@ -384,9 +404,22 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.work-box {
-  height: fit-content;
-  background: #dedede;
+.main-box {
   padding: 10px;
+  background: white;
+  min-height: calc(100% - 10px * 2);
+  height: fit-content;
+
+  .work-box {
+    height: fit-content;
+    //background: #dedede;
+    box-shadow: 0 5px 10px -5px #D9D9D9;
+    padding: 20px 10px;
+
+    .item-box {
+      margin: 10px 0;
+    }
+  }
 }
+
 </style>

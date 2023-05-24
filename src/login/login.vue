@@ -1,9 +1,13 @@
 <template>
     <div id="app">
         <div class="flex-center">
-            <div class="vertical-center" >
+            <div class="vertical-center">
                 <h2>协同开发学习网站</h2>
-                <div v-show="register === false" class="flex-vertical">
+                <div class="flex-vertical">
+                    <el-select class="info-input" v-model="userType" placeholder="选择用户类型">
+                        <el-option label="学生" value="student"></el-option>
+                        <el-option label="教师" value="teacher"></el-option>
+                    </el-select>
                     <el-input
                             class="info-input"
                             placeholder="用户名"
@@ -49,14 +53,15 @@
 <script>
 import {User as ElIconUser, Lock as ElIconLock} from '@element-plus/icons'
 import axios from "axios";
+import {ElMessageBox} from "element-plus";
 
 export default {
   data() {
     return {
       dev: null,
       root: '.',
+      userType: undefined,
       loadflag: false,
-      register: false,
       login_info: {
         userid: '',
         password: '',
@@ -68,19 +73,23 @@ export default {
   name: 'App',
   methods: {
     Login() {
-      if (this.login_info.userid === '') {
-        this.$alert('', '用户名未填', {confirmButtonText: '确定'})
+      if (!this.userType) {
+          ElMessageBox.alert('', '请选择用户类型', {confirmButtonText: '确定'})
         return
       }
-      if (this.login_info.password === '') {
-        this.$alert('', '密码未填', {confirmButtonText: '确定'})
+      if (!this.login_info.userid) {
+          ElMessageBox.alert('', '用户名未填', {confirmButtonText: '确定'})
+        return
+      }
+      if (!this.login_info.password) {
+          ElMessageBox.alert('', '密码未填', {confirmButtonText: '确定'})
         return
       }
       this.loadflag = true
       console.log(JSON.stringify(this.login_info))
       axios({
         method: 'POST',
-        url: import.meta.env.VITE_API_URL+'/user/login',
+        url: import.meta.env.VITE_API_URL + '/user/login',
         data: {
           userCode: this.login_info.userid,
           userPass: this.login_info.password
@@ -92,10 +101,26 @@ export default {
           .then((resp) => {
             this.loadflag = false
             console.log('login.do', resp.data)
-            let result = resp.data
-            localStorage.setItem("token", resp.data.data)
-            window.location.href = '/index.html'
-            this.loadflag = false
+            let token = resp.data.data
+            axios({
+              method: "get",
+              url: import.meta.env.VITE_API_URL + '/user/information',
+              headers: {
+                token: token
+              }
+            }).then(res => {
+              console.log(res)
+              if (res.data.data.userType!==this.userType) {
+                  ElMessageBox.alert('', '用户类型错误', {confirmButtonText: '确定'})
+              }else {
+                  localStorage.setItem("token", resp.data.data)
+                  localStorage.setItem("userType",this.userType)
+                  window.location.href = '/index.html'
+              }
+            })
+            // localStorage.setItem("token", resp.data.data)
+            // window.location.href = '/index.html'
+            // this.loadflag = false
           })
           .catch((error) => {
             this.loadflag = false

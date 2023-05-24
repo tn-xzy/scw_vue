@@ -115,7 +115,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.topmain-box {
+.main-box {
   padding: 10px;
+  background: white;
+  height: calc(100% - 10px * 2);
 }
 </style>

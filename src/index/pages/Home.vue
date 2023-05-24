@@ -1,7 +1,18 @@
 <template>
-    <div class="main-box" >
+    <div class="main-box">
+        <div class="info-box round-border" @click="open">
+            <div class="info-top">
+                个人信息
+            </div>
+            <div class="info-inner">
+                <el-avatar class="info-item" :size="120" src="/owl.png" fit="fill"></el-avatar>
+                <div class="info-item">用户Id:{{ userInfo.userId }}</div>
+                <div class="info-item">用户名:{{ userInfo.userName }}</div>
+                <div class="info-item" v-show="userInfo.userType==='student'">所属团队:{{ userInfo.userTeam }}</div>
+            </div>
+        </div>
         <div class="function-box round-border">
-            <div class="col-box" v-show="userInfo.userType==='teacher' ||development">
+            <div class="col-box" v-show="userType==='teacher' ||development">
                 <div class="title">教师功能</div>
                 <div class="list-outer">
                     <div class="list-inner" @click="$router.push('/TeacherWorkSingle')">
@@ -18,15 +29,9 @@
                     </div>
                 </div>
             </div>
-            <div class="col-box" v-show="userInfo.userType==='student' ||development">
+            <div class="col-box" v-show="userType==='student'||development">
                 <div class="title">学生功能</div>
                 <div class="list-outer">
-                    <!--                    <div class="list-inner" @click="$router.push('/StudentTeam')">-->
-                    <!--                        <el-icon :size="75">-->
-                    <!--                            <Edit/>-->
-                    <!--                        </el-icon>-->
-                    <!--                        <div><del>查看队伍信息</del></div>-->
-                    <!--                    </div>-->
                     <div class="list-inner" @click="$router.push('/ManagerWork')">
                         <el-icon :size="95">
                             <Edit/>
@@ -65,30 +70,18 @@
                 </div>
             </div>
         </div>
-        <div class="side-box">
-            <div class="info-box round-border" @click="open">
-                <div class="info-top">
-                    个人信息
-                </div>
-                <div class="info-box">
-                    <div style="margin-top: 10px">用户Id:{{ userInfo.userId }}</div>
-                    <div>用户名:{{ userInfo.userName }}</div>
-                    <div v-show="userInfo.userType==='student'">所属团队:{{ userInfo.userTeam }}</div>
-                </div>
+        <div class="announce-box round-border">
+            <div class="bar-box">
+                <span class="bar-title">未读通知</span>
+                <el-button @click="readAllNotification">全部已读</el-button>
             </div>
-            <div class="announce-box round-border">
-                <div class="bar-box">
-                    <span>未读通知</span>
-                    <el-button @click="readAllNotification">全部已读</el-button>
-                </div>
-                <div v-if="notificationList.length!==0" class="notification-box" v-for="noti in notificationList"
-                     :key="notificationList.notId">
-                    <p>{{ noti.content }}</p>
-                    <!--                    <p>内容:{{ noti.notification }}</p>-->
-                </div>
-                <div v-else>
-                    当前还没有任何新的通知
-                </div>
+            <div v-if="notificationList.length!==0" class="notification-box" v-for="noti in notificationList"
+                 :key="notificationList.notId">
+                <p>{{ noti.content }}</p>
+                <!--                    <p>内容:{{ noti.notification }}</p>-->
+            </div>
+            <div v-else>
+                当前还没有任何新的通知
             </div>
         </div>
     </div>
@@ -96,9 +89,17 @@
 
 <script>
 
+import anime from "animejs";
+import {UserFilled} from "@element-plus/icons";
 export default {
+    computed: {
+        UserFilled() {
+            return UserFilled
+        }
+    },
   data() {
     return {
+      userType: 'student',
       development: false,
       userInfo: {},
       notificationList: [
@@ -142,8 +143,22 @@ export default {
     }
   },
   mounted() {
+    this.userType = localStorage.getItem("userType")
     this.getUserInfo()
     this.getNotificationList()
+    anime({
+      targets: '.list-inner',
+        // duration:500,
+      translateY: [30, 0],
+    });
+      anime({
+          targets: '.notification-box',
+          translateX: [30, 0],
+      });
+      anime({
+          targets: '.info-item',
+          translateX: [-30, 0],
+      });
   }
 
 }
@@ -164,15 +179,18 @@ $box-padding: 10px;
   background: white;
 
   .round-border {
-    border-radius: 10px;
+    //border-radius: 10px;
     padding: $box-padding;
+    height: calc(100% - ($box-padding) * 2);
+
   }
 
+  $info-width: 25%;
+  $not-width: 20%;
+
   .function-box {
-    width: 65%;
-    height: calc(100% - ($box-margin + $box-padding) * 2);
-    background: rgb(204, 204, 204);
-    margin: $box-margin;
+    width: calc(100% - $info-width - $not-width);
+    box-shadow: var(--el-box-shadow);
 
     .col-box {
       display: flex;
@@ -199,48 +217,53 @@ $box-padding: 10px;
     }
   }
 
-  .mission-box {
-    width: 30%;
-    background: rgb(204, 204, 204);
-    margin: $box-margin;
-
+  .info-box {
+    width: 25%;
+    //height: calc(100% - ($box-margin + $box-padding) * 2);
+    //background: rgb(204, 204, 204);
+    margin-bottom: 20px;
+      .info-top{
+          border-bottom: 1px solid gray;
+          width: fit-content;
+          font-size: 27px;
+          padding: 0 10px ;
+      }
+      .info-inner{
+          .info-item{
+              margin-left: 30px;
+              margin-top: 10px;
+              font-size: 24px;
+          }
+      }
   }
 
-  .side-box {
-    width: 30%;
-    height: calc(100% - 40px);
-    margin: $box-margin;
-    display: flex;
-    flex-direction: column;
+  .announce-box {
+    width: 20%;
+    overflow: auto;
 
-    .info-box {
-      height: 30%;
-      background: rgb(204, 204, 204);
-      margin-bottom: 20px;
-    }
-
-    .announce-box {
-      height: 30%;
-      background: rgb(204, 204, 204);
-      overflow: auto;
-
-      .bar-box {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-      }
-
-      .notification-box {
-        background: #dedede;
-        border-radius: 10px;
-        padding: 10px;
-        margin: 5px;
-
-        p {
-          margin: 0;
+    .bar-box {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+        .bar-title{
+            border-bottom: 1px solid gray;
+            width: fit-content;
+            font-size: 27px;
+            padding: 0 10px ;
         }
+    }
+
+    .notification-box {
+      background: #f1f1f1;
+      border-radius: 10px;
+      padding: 10px;
+      margin: 20px 5px;
+
+      p {
+        margin: 0;
       }
     }
   }
+
 }
 </style>

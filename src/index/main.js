@@ -1,11 +1,10 @@
 import {createApp} from 'vue'
 import App from './index.vue'
-import * as VueRouter from 'vue-router'
 import router from './router'
 import axios
   from 'axios'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
-import {ElMessage, ElMessageBox} from "element-plus";
+import {ElMessageBox} from "element-plus";
 import 'element-plus/dist/index.css'
 
 const app = createApp(App)
@@ -37,7 +36,9 @@ axios.interceptors.response.use(function (res) {
         dangerouslyUseHTMLString: true,
       })
     }
+    return
   }
+  return res
 }, function (error) {
   console.debug("拦截响应-请求报错", error)
   ElMessageBox.alert(`<p>简要描述:${error.message}</p>
