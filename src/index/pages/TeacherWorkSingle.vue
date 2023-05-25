@@ -78,7 +78,7 @@ export default {
       const file = e.target.files[0];
       const formData = new FormData();
       formData.append("file", file)
-      this.$axios.post("/api//work/resource/" + "0", formData, {
+      this.$axios.post("/work/resource/" + "0", formData, {
         'Content-type': 'multipart/form-data'
       }).then(res => {
         this.workData.resourceRoute = res.data.data
@@ -98,7 +98,7 @@ export default {
           return
         }
       }
-      this.$axios.post("/api/work/study/create", this.workData
+      this.$axios.post("/work/study/create", this.workData
       ).then(res => {
         if (res.data.status === 0) {
           ElMessageBox.alert(`创建成功`, `提示`, {
@@ -117,5 +117,7 @@ export default {
 <style lang="scss" scoped>
 .main-box {
   padding: 10px;
+  background: white;
+  height: calc(100% - 10px * 2);
 }
 </style>
