@@ -79,7 +79,7 @@
             <div class="announce-box round-border">
                 <div class="bar-box">
                     <span>未读通知</span>
-                    <el-button @click="readAllNotification">全部已读</el-button>
+                    <el-button @click="readAllNotification" >全部已读</el-button>
                 </div>
                 <div v-if="notificationList.length!==0" class="notification-box" v-for="noti in notificationList"
                      :key="notificationList.notId">
@@ -129,6 +129,9 @@ export default {
           })
     },
     getNotificationList() {
+      // this.$axios.get("/api/notification/unread").then(resp=>{
+      //   console.log(resp.data)
+      // })
       //TODO 这里获取一下所有未读通知放入this.notificationList,被注释的代码不用管
       // for (let i = 0; i < this.notificationList.length; i++) {
       //   let content = this.notificationList[i].content
