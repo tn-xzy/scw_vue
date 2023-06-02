@@ -64,7 +64,7 @@ export default {
           "content": "test mission2",
           "releaseTime": "2023-05-17 13:57:00",
           "endTime": "2023-06-01 00:00:00",
-          "resourceRoute": "http://127.0.0.1:8081/static/study_work/resource/2035060729 谢卓越 实验二(1).docx",
+          "resourceRoute": "",
           "status": 1,
           "teamWorks": [
             {
@@ -82,7 +82,7 @@ export default {
           "content": "test mission1",
           "releaseTime": "2023-05-16 20:27:00",
           "endTime": "2023-06-01 00:00:00",
-          "resourceRoute": "http://127.0.0.1:8081/static/study_work/resource/2035060729 谢卓越 实验二(1).docx",
+          "resourceRoute": "",
           "status": 1,
           "teamWorks": [
             {

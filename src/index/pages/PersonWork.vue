@@ -51,7 +51,7 @@ export default {
             "content": "test mission axios 3",
             "releaseTime": "2023-05-17 20:48:10",
             "endTime": "2023-05-31 00:00:00",
-            "resourceRoute": "http://127.0.0.1:8081/static/single_work/production/2035060729 谢卓越 实验二.docx",
+            "resourceRoute": "",
             "status": 1
           },
           "teamWork": {
@@ -76,7 +76,7 @@ export default {
             "content": "test mission axios 3",
             "releaseTime": "2023-05-17 20:48:10",
             "endTime": "2023-05-31 00:00:00",
-            "resourceRoute": "http://127.0.0.1:8081/static/single_work/production/2035060729 谢卓越 实验二.docx",
+            "resourceRoute": "http://127.0.0.1:8081/static/single_work",
             "status": 1
           },
           "teamWork": {
@@ -101,7 +101,7 @@ export default {
             "content": "test mission axios 3",
             "releaseTime": "2023-05-17 20:48:10",
             "endTime": "2023-05-31 00:00:00",
-            "resourceRoute": "http://127.0.0.1:8081/static/single_work/production/2035060729 谢卓越 实验二.docx",
+            "resourceRoute": "http://127.0.0.1:8081/static/single_work/produc",
             "status": 1
           },
           "teamWork": {
@@ -126,7 +126,7 @@ export default {
             "content": "test mission axios 3",
             "releaseTime": "2023-05-17 20:48:10",
             "endTime": "2023-05-31 00:00:00",
-            "resourceRoute": "http://127.0.0.1:8081/static/single_work/production/2035060729 谢卓越 实验二.docx",
+            "resourceRoute": "http://127.0.0.1:8081/static/single_wor",
             "status": 1
           },
           "teamWork": {

@@ -325,7 +325,7 @@ export default {
           "content": "test mission1",
           "releaseTime": "2023-05-16 20:27:00",
           "endTime": "2023-06-01 00:00:00",
-          "resourceRoute": "http://127.0.0.1:8081/static/study_work/resource/2035060729 谢卓越 实验二(1).docx",
+          "resourceRoute": "",
           "status": 0,
           "singleWorks": [
             {
@@ -341,7 +341,7 @@ export default {
               "workDescription": "persona work 2",
               "belongStudent": 1,
               "belongWork": 498543124,
-              "productionRoute": "http://127.0.0.1:8081/static/single_work/production/实验报告-模板-信息安全 - 副本.docx0",
+              "productionRoute": "",
               "status": 1
             },
             {
@@ -363,7 +363,7 @@ export default {
           "content": "test mission1",
           "releaseTime": "2023-05-16 20:27:00",
           "endTime": "2023-06-01 00:00:00",
-          "resourceRoute": "http://127.0.0.1:8081/static/study_work/resource/2035060729 谢卓越 实验二(1).docx",
+          "resourceRoute": "",
           "status": 1,
           show: undefined
         }
@@ -383,14 +383,6 @@ export default {
           "belongWork": 1334870868,
           "productionRoute": "",
           "status": 0
-        },
-        {
-          "singleWorkId": 1402732052,
-          "workDescription": "eee1",
-          "belongStudent": 1,
-          "belongWork": 1334870868,
-          "productionRoute": "http://127.0.0.1:8081/static/single_work/production/2035060729 谢卓越 实验一.docx",
-          "status": 1
         }
       ]
     }

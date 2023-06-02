@@ -1,8 +1,7 @@
 import {createApp} from 'vue'
 import App from './index.vue'
 import router from './router'
-import axios
-  from 'axios'
+import axios from 'axios'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 import {ElMessageBox} from "element-plus";
 import 'element-plus/dist/index.css'
